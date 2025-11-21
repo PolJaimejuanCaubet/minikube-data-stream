@@ -36,23 +36,23 @@ password: cloudpass
 ```bash
 docker build -t p1-save ./cloud/save_raw
 minikube image load p1.save
-kubectl apply -f save-raw-data.yml
+kubectl apply -f cloud/servicesk8s/save-raw-data.yml
 ```
 
 ```bash
 docker build -t p2-clean ./cloud/clean
 minikube image load p2-clean
-kubectl apply -f clean.yml
+kubectl apply -f cloud/servicesk8s/clean.yml
 ```
 
 ```bash
 docker build -t p3-actuate ./cloud/actuate
 minikube image load p-actuate
-kubectl apply -f actuate.yml
+kubectl apply -f cloud/servicesk8s/actuate.yml
 ```
 
 ```bash
 docker build -t p4-aggregate ./cloud/aggregate
 minikube image load p4-aggregate
-kubectl apply -f aggregate.yml
+kubectl apply -f cloud/servicesk8s/aggregate.yml
 ```
