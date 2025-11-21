@@ -48,7 +48,7 @@ for msg in consumer:
 
     point = Point("home_avg_temperature") \
         .tag("home", home) \
-        .field("avg_value", avg_temp) \
+        .field("avg_temp", avg_temp) \
         .time(datetime.fromisoformat(timestamp))
 
     write_api.write(bucket=INFLUX_BUCKET, record=point)

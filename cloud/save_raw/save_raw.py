@@ -29,8 +29,8 @@ for msg in consumer:
     
     point = (
         Point("raw_temperature")
-        .tag("home", event["home_id"])
-        .tag("room", event["room_id"])
+        .tag("home", event["home"])
+        .tag("room", event["room"])
         .field("value", float(event["value"]))
         .time(datetime.fromisoformat(event["timestamp"]))
     )

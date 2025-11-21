@@ -1,4 +1,4 @@
-from datetime import time
+import time
 import json
 import os
 import paho.mqtt.client as mqtt
@@ -35,7 +35,7 @@ for msg in consumer:
     elif temp > 25:
         command = "stop"
 
-    time.sleep(2)
+    time.sleep(5)
 
     if command:
         mqtt_topic = f"{home}/{room}/heatpump/set"
