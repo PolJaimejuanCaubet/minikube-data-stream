@@ -1,56 +1,24 @@
-## MINIKUBE
+# TEMPERATURE SENSOR
 
-```bash
-minikube start
-minikube dashboard
-```
-Open new terminal
-```bash
-docker build -t ingestor ./cloud/ingestor
-minikube image load ingestor
-kubectl apply -f cloud/servicesk8s/ingestor.yml -f cloud/servicesk8s/kafka.yml -f cloud/servicesk8s/mosquitto-cloud.yml -f cloud/servicesk8s/zookeeper.yml
-kubectl port-forward svc/mosquitto-svc 1883:1883
-```
-(per a poder accedir al mosquito desde el meu localhost al mosquito dins del minikube)
-per al MQTT EXPLORER el port 1883 i localhost)
+This docker implements a temperature simulator of a room with a heatpump. 
+It will report simulated temperature readings with the ratio 1:60 where 1 second in the simulation is 1 minute in reality.
+If the heatpump is off, the temperature will decrease. If it is on it will start to increase
 
-Open new terminal
+### MESSAGE FORMAT
+The sensor reports {"timestamp": "<yyyy-mm-ddTHH:MM:SS.sss>", "value": <float>} indicating the simulated time and the value
+The sensor listens messages with the format {"status":<status>} expecting values of *1-on*, *0-off*
 
-```bash
-docker compose up --build
-docker-compose -p <several-projects> up 
-```
-Open new terminal
+### CONFIGURATION
 
-```bash
-kubectl apply -f cloud/servicesk8s/influx-db.yml
-kubectl port-forward svc/influxdb-svc 8086:8086
-```
+You have to specify the following environment variables to configurate the sensor:
+    - MQTT_HOST=<host of the user's mosquito in the local network>
+    - SENSOR_TOPIC_DATA=<topic where to report sensor readings>
+    - SENSOR_TOPIC_STATUS=<topic to send status messages>
 
-Open new terminal
+### DOCKER COMPOSE
 
-[InfluxDB UI](http://localhost:8086/)
-
-```bash
-docker build -t p1-save .
-minikube image load p1.save
-kubectl apply -f save-raw-data.yml
-```
-
-```bash
-docker build -t p2-clean .
-minikube image load p2-clean
-kubectl apply -f clean.yml
-```
-
-```bash
-docker build -t p3-actuate .
-minikube image load p-actuate
-kubectl apply -f actuate.yml
-```
-
-```bash
-docker build -t p4-aggregate .
-minikube image load p4-aggregate
-kubectl apply -f aggregate.yml
-```
+- Create different docker composes to have different sensor at user's homes.
+- Launch the docker compose with `--project-name` to have the same docker compose running with different name  
+`docker-compose -f <file_yaml> --project-name <specific_name> up`
+- Launch the docker compose with `--build` to build the containers specified with "build" instead of image
+`docker-compose -f <file_yaml> --project-name <specific_name> up --build`
