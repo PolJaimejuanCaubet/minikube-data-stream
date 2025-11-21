@@ -1,6 +1,5 @@
 import json
 import os
-import time
 import paho.mqtt.client as mqtt
 from kafka import KafkaConsumer
 
@@ -11,8 +10,8 @@ MQTT_PORT = int(os.getenv("MQTT_PORT"))
 
 mqtt_client = mqtt.Client()
 mqtt_client.connect(MQTT_HOST, MQTT_PORT, 60)
+mqtt_client.loop_start()
 
-print(f"ESTE ES EL TOPIC {TOPIC_CLEAN}, {type(TOPIC_CLEAN)}")
 consumer = KafkaConsumer(
     TOPIC_CLEAN,
     bootstrap_servers=[KAFKA_HOST],
@@ -21,27 +20,23 @@ consumer = KafkaConsumer(
     group_id="p3-actuator-group"
 )
 
-
 for msg in consumer:
     event = msg.value
     home = event["home_id"]
     room = event["room_id"]
     temp = float(event["value"])
-    print(f"La temperatura es -> {temp}")
+    
     print(f"Tipo de la variable temp -> {type(temp)}")
 
+    command = None
     if temp < 20:
         command = "start"
     elif temp > 25:
         command = "stop"
+
+    if command:
+        mqtt_topic = f"{home}/{room}/heatpump/set"
+        mqtt_client.publish(mqtt_topic, command)
+        print(f"Actuate at - {mqtt_topic} = {command} Temp: {temp}")
     else:
-        print(f"[P3] {home}/{room} -> Temp={temp} - No action")
-        continue
-
-    mqtt_topic = f"{home}/{room}/heatpump/set"
-
-    
-    time.sleep(1)
-
-    mqtt_client.publish(mqtt_topic, command)
-    print(f"[P3] ACTUATION SENT → {mqtt_topic} = {command}")
+        print(f"Temperature is betwenn 20-25 -> {home}/{room} Temp: {temp}")

@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from kafka import KafkaConsumer, KafkaProducer
@@ -43,7 +44,8 @@ for msg in consumer:
     point = Point("temperature_clean") \
         .tag("home", event['home_id']) \
         .tag("room", event['room_id']) \
-        .field("value", value)
+        .field("value", value) \
+        .time(datetime.fromisoformat(event["timestamp"]))
         
     write_api.write(bucket=INFLUX_BUCKET, record=point)
 
