@@ -54,7 +54,7 @@ services:
     networks:
       - internal_net
   gateway:
-    build: ./gatewayNOU
+    build: ./gateway
     environment:
       - LOCAL_MQTT_HOST=mosquitto
       - CLOUD_MQTT_HOST=host.docker.internal
