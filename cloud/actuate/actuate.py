@@ -1,3 +1,4 @@
+from datetime import time
 import json
 import os
 import paho.mqtt.client as mqtt
@@ -22,8 +23,8 @@ consumer = KafkaConsumer(
 
 for msg in consumer:
     event = msg.value
-    home = event["home_id"]
-    room = event["room_id"]
+    home = event["home"]
+    room = event["room"]
     temp = float(event["value"])
     
     print(f"Tipo de la variable temp -> {type(temp)}")
@@ -33,6 +34,8 @@ for msg in consumer:
         command = "start"
     elif temp > 25:
         command = "stop"
+
+    time.sleep(2)
 
     if command:
         mqtt_topic = f"{home}/{room}/heatpump/set"

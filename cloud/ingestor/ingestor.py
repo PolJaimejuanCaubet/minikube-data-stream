@@ -22,8 +22,8 @@ def on_message(client, userdata, msg):
     payload = json.loads(msg.payload.decode("utf-8"))
     
     kafka_message = {
-        "home_id": topic_parts[0],
-        "room_id": topic_parts[1],
+        "home": topic_parts[0],
+        "room": topic_parts[1],
         "timestamp": payload["timestamp"],
         "value": payload["value"]
     }
@@ -31,7 +31,7 @@ def on_message(client, userdata, msg):
     future = producer.send(KAFKA_TOPIC, value=kafka_message)
     
     metadata = future.get(timeout=10) 
-    print(f"ENVIADO OK: Home={kafka_message['home_id']}, Room={kafka_message['room_id']} -> Kafka Topic={metadata.topic}")
+    print(f"ENVIADO OK: Home={kafka_message['home']}, Room={kafka_message['room']} -> Kafka Topic={metadata.topic}")
 
 client = mqtt.Client()
 client.on_connect = on_connect

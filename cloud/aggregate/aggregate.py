@@ -19,32 +19,36 @@ consumer = KafkaConsumer(
     TOPIC_CLEAN,
     bootstrap_servers=KAFKA_HOST,
     value_deserializer=lambda x: json.loads(x.decode('utf-8')),
+    auto_offset_reset="earliest",
     group_id="p4-aggregator-group"
 )
 
-home_temps = {}
-
-print(f"P4 Aggregator Iniciado escuchando en {TOPIC_CLEAN}...")
+home_data = {}
 
 for msg in consumer:
     event = msg.value
-    home_id = event.get('home_id')
-    value = float(event.get('value', 0))
-    timestamp_str = event.get("timestamp") 
     
-    if home_id not in home_temps:
-        home_temps[home_id] = []
+    home = event["home"]
+    room = event["room"]
+    value = float(event["value"])
+    timestamp = event["timestamp"]
 
-    home_temps[home_id].append(value)
-    if len(home_temps[home_id]) >= 5: #redundant
-        avg_temp = sum(home_temps[home_id]) / len(home_temps[home_id])
-        print(f"Agregando {home_id}: Media {avg_temp:.2f}")
+    if home not in home_data:
+        home_data[home] = {}
 
-        point = Point("home_avg_temperature") \
-            .tag("home", home_id) \
-            .field("avg_value", avg_temp) \
-            .time(datetime.fromisoformat(timestamp_str))
+    home_data[home][room] = value
+    rooms = home_data[home]
 
-        write_api.write(bucket=INFLUX_BUCKET, record=point)
+    if len(rooms) < 5:   
+        continue
 
-        home_temps[home_id] = []
+    avg_temp = sum(rooms.values()) / len(rooms)
+
+    print(f"{home} -> average temp = {avg_temp}")
+
+    point = Point("home_avg_temperature") \
+        .tag("home", home) \
+        .field("avg_value", avg_temp) \
+        .time(datetime.fromisoformat(timestamp))
+
+    write_api.write(bucket=INFLUX_BUCKET, record=point)

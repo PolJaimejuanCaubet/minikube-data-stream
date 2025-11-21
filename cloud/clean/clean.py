@@ -1,6 +1,6 @@
-import datetime
 import json
 import os
+from datetime import datetime
 from kafka import KafkaConsumer, KafkaProducer
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -42,8 +42,8 @@ for msg in consumer:
         continue
 
     point = Point("temperature_clean") \
-        .tag("home", event['home_id']) \
-        .tag("room", event['room_id']) \
+        .tag("home", event['home']) \
+        .tag("room", event['room']) \
         .field("value", value) \
         .time(datetime.fromisoformat(event["timestamp"]))
         
