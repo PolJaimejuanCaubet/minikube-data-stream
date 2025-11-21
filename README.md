@@ -30,6 +30,8 @@ kubectl port-forward svc/influxdb-svc 8086:8086
 Open new terminal
 
 [InfluxDB UI](http://localhost:8086/)
+user: admin
+password: cloudpass
 
 ```bash
 docker build -t p1-save .
