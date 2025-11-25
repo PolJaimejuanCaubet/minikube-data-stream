@@ -26,20 +26,16 @@ for msg in consumer:
     home = event["home"]
     room = event["room"]
     temp = float(event["value"])
-    
-    print(f"Tipo de la variable temp -> {type(temp)}")
 
     command = None
     if temp < 20:
-        command = "start"
+        command = json.dumps({"status": "1"})
     elif temp > 25:
-        command = "stop"
+        command = json.dumps({"status": "0"})
 
-    time.sleep(5)
+    # time.sleep(1)
 
     if command:
         mqtt_topic = f"{home}/{room}/heatpump/set"
         mqtt_client.publish(mqtt_topic, command)
-        print(f"Actuate at - {mqtt_topic} = {command} Temp: {temp}")
-    else:
-        print(f"Temperature is betwenn 20-25 -> {home}/{room} Temp: {temp}")
+        print(f"{mqtt_topic} = {command} because temp is: {temp}º")

@@ -19,7 +19,7 @@ consumer = KafkaConsumer(
     TOPIC_CLEAN,
     bootstrap_servers=KAFKA_HOST,
     value_deserializer=lambda x: json.loads(x.decode('utf-8')),
-    auto_offset_reset="earliest",
+    auto_offset_reset="latest",
     group_id="p4-aggregator-group"
 )
 

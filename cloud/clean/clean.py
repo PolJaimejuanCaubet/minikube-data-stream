@@ -15,12 +15,13 @@ INFLUX_TOKEN = os.getenv('INFLUX_TOKEN')
 INFLUX_ORG = os.getenv('INFLUX_ORG')
 INFLUX_BUCKET = os.getenv("INFLUX_BUCKET")
 
-print(f"ESTE ES EL TOPIC {KAFKA_TOPIC}, {type(KAFKA_TOPIC)}")
 
 consumer = KafkaConsumer(
     KAFKA_TOPIC, 
     bootstrap_servers=KAFKA_HOST,
-    value_deserializer=lambda x: json.loads(x.decode('utf-8'))
+    value_deserializer=lambda x: json.loads(x.decode('utf-8')),
+    # auto_offset_reset="earliest",
+    # group_id="p2-cleaner-group"
 )
 
 producer = KafkaProducer(
@@ -35,7 +36,6 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 for msg in consumer:
     event = msg.value
     value = float(event.get('value', 0))
-    
     
     if value == 100.0:
         print(f"Dato descartado pq es == 100: {value}")

@@ -19,6 +19,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     topic_parts = msg.topic.split('/') 
+    print(topic_parts)
     payload = json.loads(msg.payload.decode("utf-8"))
     
     kafka_message = {

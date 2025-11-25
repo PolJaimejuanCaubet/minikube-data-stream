@@ -17,12 +17,6 @@ per al MQTT EXPLORER el port 1883 i localhost)
 Open new terminal
 
 ```bash
-docker compose up --build
-docker-compose -p <several-projects> up 
-```
-Open new terminal
-
-```bash
 kubectl apply -f cloud/servicesk8s/influx-db.yml
 kubectl port-forward svc/influxdb-svc 8086:8086
 ```
@@ -38,7 +32,6 @@ docker build -t p1-save ./cloud/save_raw
 minikube image load p1-save
 kubectl apply -f cloud/servicesk8s/save-raw-data.yml
 ```
-
 ```bash
 docker build -t p2-clean ./cloud/clean
 minikube image load p2-clean
@@ -55,4 +48,8 @@ kubectl apply -f cloud/servicesk8s/actuate.yml
 docker build -t p4-aggregate ./cloud/aggregate
 minikube image load p4-aggregate
 kubectl apply -f cloud/servicesk8s/aggregate.yml
+```
+```bash
+docker compose up --build
+docker-compose -p <several-projects> up 
 ```
