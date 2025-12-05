@@ -1,5 +1,7 @@
 ## MINIKUBE
-
+```bash
+cd minikube-project
+```
 ```bash
 minikube start
 minikube dashboard
