@@ -26,7 +26,7 @@ consumer = KafkaConsumer(
 
 for msg in consumer:
     event = msg.value
-    
+        
     point = (
         Point("raw_temperature")
         .tag("home", event["home"])
